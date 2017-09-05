@@ -1,0 +1,38 @@
+[
+    {
+        "quote": "The pessimist complains about the wind; the optimist expects it to change; the realist adjusts the sails.",
+        "author": "William Arthur Ward",
+        "tags": "optimism,realism",
+        "public": "yes"
+    },
+    {
+        "quote": "Your time is limited, so don't waste it living someone else's life. Don't be trapped by dogma -- which is living with the results of other people's thinking. Don't let the noise of other's opinions drown out your own inner voice. And most important, have the courage to follow your heart and intuition. They somehow already know what you truly want to become. Everything else is secondary.",
+        "author": "Steve Jobs",
+        "tags": null,
+        "public": "yes"
+    },
+    {
+        "quote": "... the truly free individual is free only to the extent of his own self-mastery. While those who will not govern themselves are condemned to find masters to govern over them.",
+        "author": "Steven Pressfield",
+        "tags": null,
+        "public": "yes"
+    },
+    {
+        "quote": "Nothing exists except atoms and empty space; all else is mere opinion.",
+        "author": "Democritus",
+        "tags": "space",
+        "public": "yes"
+    },
+    {
+        "quote": "People like us, who believe in physics, know that the distinction between past, present, and future is only a stubbornly persistent illusion.",
+        "author": "Albert Einstein",
+        "tags": "time",
+        "public": "yes"
+    },
+    {
+        "quote": "Silence is golden.",
+        "author": null,
+        "tags": null,
+        "public": "yes"
+    }
+]
