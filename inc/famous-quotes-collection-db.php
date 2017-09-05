@@ -135,7 +135,7 @@ class Famous_Quotes_Collection_DB {
 		
 	    $insert = $this->db->prepare( "INSERT INTO " . $this->table_name .
 			"(`quote`, `author`,  `tags`, `public`, `time_added`)" .
-			"VALUES (%s, %s, %s, %s, %s, NOW())" , $quote, $author, $source, $tags, $public);	
+			"VALUES (%s, %s, %s, %s, NOW())" , $quote, $author, $tags, $public);	
 		
 		$result = $this->db->query($insert);
 
@@ -181,6 +181,49 @@ class Famous_Quotes_Collection_DB {
 		return $this->db->query($insert);
 	}
 
+	/**
+	 * Updates a quote entry in DB with new values
+	 *
+	 * @param array $entry the quote entry
+	 */
+	public function update_quote($quote_data = array()) {
+		if(!$this->is_table_found()) 
+			return false;
+
+		if( is_object($quote_data) ) {
+			$quote_data = (array) $quote_data;
+		}
+
+		if( !$quote_data['quote'] )  return 0;
+		if( !($quote_id = $quote_data['quote_id']) )  return $this->put_quote($quote_data);
+
+		$quote_data = $this->validate_data($quote_data);
+		extract($quote_data);
+		$update = "UPDATE " . $this->table_name . "
+			SET `quote` = %s,
+				`author` = %s,
+				`tags` = %s,
+				`public` = %s, 
+				`time_updated` = NOW()
+			WHERE `quote_id` = %d";
+		$update = $this->db->prepare( $update, $quote, $author, $tags, $public, $quote_id);
+		return $this->db->query( $update );
+	}
+
+
+	/**
+	 * Deletes a quote entry in the DB
+	 *
+	 * @param int $quote_id the ID of the entry to be deleted
+	 */
+	public function delete_quote($quote_id) {
+		if(is_numeric($quote_id)) {
+				$sql = "DELETE from " . $this->table_name .
+				" WHERE quote_id = " . $quote_id;
+			return $this->db->query($sql);
+		}
+		else return 0;
+	}
 
 
 	/**
@@ -202,7 +245,21 @@ class Famous_Quotes_Collection_DB {
 		return $this->db->query($sql);
 	}
 
-
+	/**
+	 * Function to make a set of entries private or public
+	 *
+	 * @param array $quote_ids an array of IDs of the entries to be updated
+	 * @param string $visibility should be'yes' or 'no'
+	 */
+	public function change_visibility($quote_ids, $visibility = 'yes') {
+		if( !$quote_ids || ($visibility != 'yes' && $visibility != 'no') )
+			return 0;
+		$sql = "UPDATE ".$this->table_name
+			."SET public = '".$visibility."',
+			time_updated = NOW()
+			WHERE quote_id IN (".implode(', ', $quote_ids).")";
+		return $this->db->query($sql);
+	}
 
 	/**
 	 * Counts and returns the number of entries with a particular entries.
@@ -285,6 +342,119 @@ class Famous_Quotes_Collection_DB {
 		global $wpdb;
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}quotescollection" );
 	}
+
+
+
+	/**
+	 * Frames the database query condition
+	 * 
+	 * @param array $args = array (
+	 *    'quote_id'   => 0,          // Number, quote_id of the quote to be fetched
+	 *    'author'     => '',         // String, to fetch quote/s by a particular author
+	 *    'tags'       => '',         // String, comma separated tags, to fetch quote/s having one of the tags
+	 *    'public'     => ''          // String, 'yes' or 'no'
+	 *    'char_limit' => 0,          // Number, character limit
+	 *    'exclude'    => 0,          // Number, quote_id of the particular quote to be excluded
+	 *    'splice'     => 0,          // Number, quote_id, only quotes with IDs less than this will be fetched
+	 *    'orderby'    => 'quote_id', // String, can be one of 'quote_id', 'author', 'time_added', 'random'
+	 *    'order'      => 'ASC',      // String, 'ASC' or 'DESC' 
+	 *    'num_quotes' => 0,          // Number of quotes to be fetched
+	 *    'start'      => 0,          // Number, quote_id, used in pagination along with num_quotes
+	 * )
+	 *
+	 * @return string    The SQL condition
+	 */
+	private function frame_condition($args = array()) {
+		if(!$args) return "";
+
+		$condition = '';
+
+		if( isset($args['quote_id']) && is_numeric($args['quote_id']) ) {
+			$condition .= " `quote_id` = ".$args['quote_id'];
+		}
+
+		if( isset($args['exclude']) && is_numeric($args['exclude']) ) {
+			$condition .= " `quote_id` <> ".$args['exclude'];
+		}
+
+		if( isset($args['splice']) && is_numeric($args['splice']) ) {
+			$condition .= " `quote_id` < ".$args['splice'];
+		}
+
+		if( isset($args['author']) ) {
+			$condition .= " `author`='" . esc_sql( stripslashes( strip_tags ( $args['author'] ) ) ) . "'";
+		}
+		if( isset($args['tags']) && is_string($args['tags']) && !empty($args['tags']) ) {
+			$taglist = explode(',', html_entity_decode($args['tags']));
+			$tag_condition = "";
+			foreach($taglist as $tag) {
+						$tag = $this->db->esc_like( strip_tags( trim( $tag ) ) );
+				if($tag_condition) $tag_condition .= " OR ";
+				$tag_condition .= 
+					"tags = '{$tag}' "
+					."OR tags LIKE '{$tag},%' "
+					."OR tags LIKE '%,{$tag},%' "
+					."OR tags LIKE '%,{$tag}'";
+			}
+			if($tag_condition) {
+				if($condition) $condition .= " AND";
+				$condition .= " ({$tag_condition})";
+			}
+		}
+		if( isset($args['search']) && is_string($args['search']) && !empty($args['search']) ) {
+			$search_query = $this->db->esc_like( strip_tags( trim( $args['search'] ) ) );
+			
+			$search_condition = 
+				"quote = '{$search_query}' "
+				."OR quote LIKE '{$search_query}%' "
+				."OR quote LIKE '%{$search_query}%' "
+				."OR quote LIKE '%{$search_query}' "
+				."OR author = '{$search_query}' "
+				."OR author LIKE '{$search_query},%' "
+				."OR author LIKE '%{$search_query}%' "
+				."OR author LIKE '%{$search_query}' "
+				."OR tags = '{$search_query}' "
+				."OR tags LIKE '{$search_query},%' "
+				."OR tags LIKE '%,{$search_query},%' "
+				."OR tags LIKE '%,{$search_query}'";
+				
+			if($condition) $condition .= " AND";
+			$condition .= " ({$search_condition})";
+		}
+
+		if(isset($args['char_limit']) && is_numeric($args['char_limit']) && $args['char_limit'] > 0) {
+			if($condition) $condition .= " AND";
+			$condition .= " CHAR_LENGTH(`quote`) <= ".$args['char_limit'];
+		}
+		if($condition)
+			$condition = " WHERE".$condition;
+            
+		if(isset($args['public']) && ( $args['public'] == 'yes' || $args['public'] == 'no' ) ) {
+			if($condition) $condition .= " AND";
+			$condition .= " `public` = '". esc_sql($args['public'])."'";			
+		}
+
+
+
+		if(isset($args['orderby']) && $args['orderby']) {
+			if($args['orderby'] == "random")
+				$condition .= " ORDER BY RAND(UNIX_TIMESTAMP(NOW()))";
+			else if(in_array($args['orderby'], array('quote_id', 'quote', 'author', 'time_added'))) {
+				$condition .= " ORDER BY `".$args['orderby']."`";
+				if( isset($args['order']) && ($args['order'] == 'DESC' || $args['order'] == 'desc') )
+					$condition .= " DESC";
+			}
+		}
+		if(isset($args['num_quotes']) && is_numeric($args['num_quotes'])) {
+			if(isset($args['start']) && is_numeric($args['start'])) {
+				$condition .= " LIMIT ".$args['start'].", ".$args['num_quotes']	;
+			}
+			else
+			$condition .= " LIMIT ".$args['num_quotes'];
+		}
+		return $condition;
+
+	} 
 
 
 

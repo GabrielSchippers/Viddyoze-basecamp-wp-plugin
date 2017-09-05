@@ -454,16 +454,15 @@ class Famous_Quotes_Collection_Admin {
 
 		// If the new quote submitted is added to the database, leave the fields blank
 		if( !$quote_id && $this->quote_added ) {
-			$quote = $author = $source = $tags = "";
+			$quote = $author = $tags = "";
 			$public_selected = ' checked="checked"';
 		}
 		// Else check if there are any submitted values, and fill the fields with those 
 		else {
 			$quote = ( isset($_REQUEST['quote']) && trim($_REQUEST['quote']) )? stripslashes(htmlspecialchars(trim($_REQUEST['quote']))): "";
 			$author = ( isset($_REQUEST['author']) && trim($_REQUEST['author']) )? stripslashes(htmlspecialchars(trim($_REQUEST['author']))): "";
-			$source = ( isset($_REQUEST['source']) && trim($_REQUEST['source']) )? stripslashes(htmlspecialchars(trim($_REQUEST['source']))): "";
 			$tags = ( isset($_REQUEST['tags']) && trim($_REQUEST['tags']) )? stripslashes(htmlspecialchars(trim($_REQUEST['tags']))): "";
-			$public_selected =( !isset($_REQUEST['public']) && ($quote || $author || $source || $tags) )? "": " checked=\"checked\"";
+			$public_selected =( !isset($_REQUEST['public']) && ($quote || $author || $tags) )? "": " checked=\"checked\"";
 		}
 		$submit_button = get_submit_button( _x('Add Quote', 'submit button text', 'famous-quotes-collection'), 'primary large', 'submit', false);
 		$nonce_action_name = 'add_quote';
@@ -471,11 +470,10 @@ class Famous_Quotes_Collection_Admin {
 
 		if( $quote_id && is_numeric( $quote_id) ) {
 			$form_name = "quotescollection_editquote";
-			if( !$quote && !$author && !$source && !$tags ) {
+			if( !$quote && !$author && !$tags ) {
 				$quote_data = Quotes_Collection_Quote::with_id( $quote_id );
 				$quote = htmlspecialchars( $quote_data->quote );
 				$author = htmlspecialchars( $quote_data->author );
-				$source = htmlspecialchars( $quote_data->source );
 				$tags = implode( ', ', explode( ',', $quote_data->tags ) );
 				if( 'no' == $quote_data->public ) {
 					$public_selected = "";
@@ -496,7 +494,6 @@ class Famous_Quotes_Collection_Admin {
 
 		$quote_label = __('Quote', 'famous-quotes-collection');
 		$author_label = __('Author', 'famous-quotes-collection');
-		$source_label = __('Source', 'famous-quotes-collection');
 		$tags_label = __('Tags', 'famous-quotes-collection');
 		$public_label = __('Public?', 'famous-quotes-collection');
 		$optional_text = __('optional', 'famous-quotes-collection');
@@ -514,11 +511,6 @@ class Famous_Quotes_Collection_Admin {
                     <div class="form-field">
                         <label for="quotescollection_author"><strong>{$author_label}</strong></label>
                         <input type="text" id="quotescollection_author" name="author" value="{$author}" />
-                        <p>{$optional_text}</p>
-                    </div>
-                    <div class="form-field">
-                        <label for="quotescollection_source"><strong>{$source_label}</strong></label>
-                        <input type="text" id="quotescollection_source" name="source" value="{$source}" /><br />
                         <p>{$optional_text}</p>
                     </div>
                     <div class="form-field">

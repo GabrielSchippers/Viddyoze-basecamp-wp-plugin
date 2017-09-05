@@ -1,8 +1,8 @@
 <?php
 /**
- * Quotes Collection Widget
+ * Famous Quotes Collection Widget
  *
- * @package Famous Quotes Collection
+ * @package Famous Quotes
  */
 
 class Famous_Quotes_Collection_Widget extends WP_Widget {
@@ -12,7 +12,7 @@ class Famous_Quotes_Collection_Widget extends WP_Widget {
 	 */
 	function __construct() {
 		parent::__construct(
-			'famousquotescollection', // Base ID
+			'quotescollection', // Base ID
 			_x('Random Famous Quote', 'widget name', 'famous-quotes-collection'), // Name
 			array( 'description' => _x('Random famous quote from your quotes collection', 'widget description', 'famous-quotes-collection'), ) // Args
 			);
@@ -96,7 +96,7 @@ class Famous_Quotes_Collection_Widget extends WP_Widget {
 		}
 
 
-		$show_author_checked = $show_source_checked	= $ajax_refresh_checked = $auto_refresh_checked = $random_refresh_checked = '';
+		$show_author_checked = $ajax_refresh_checked = $auto_refresh_checked = $random_refresh_checked = '';
 		$int_select = array ( '5' => '', '10' => '', '15' => '', '20' => '', '30' => '', '60' => '');
 		if($options['show_author'])
 			$show_author_checked = ' checked="checked"';

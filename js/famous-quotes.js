@@ -46,10 +46,6 @@ function quotescollectionDisplayFormat(quoteData, args) {
 	if( args.showAuthor && quoteData.author && quoteData.author != 'null' ) {
 		attribution = '<cite class=\"author\">' + quoteData.author + '</cite>';
 	}
-	if( args.showSource && quoteData.source && quoteData.source != 'null' ) {
-		if(attribution) attribution += ', ';
-		attribution += '<cite class=\"source title\">' + quoteData.source + '</cite>';
-	}
 	if(attribution) {
 		display += '<div class=\"attribution\">&mdash;&nbsp;' + attribution + '</div>';
 	}
