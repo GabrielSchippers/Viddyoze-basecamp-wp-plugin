@@ -52,10 +52,6 @@ class Famous_Quotes_Collection {
 		if( is_admin() && NULL === $quotescollection_admin ) {
 			$quotescollection_admin = new Quotes_Collection_Admin();
 		}
-
-		if( NULL === $quotescollection_shortcode ) {
-			$quotescollection_shortcode = new Quotes_Collection_Shortcode();
-		}
 	}
 
 	/** Load scripts and styles required at the front end **/
