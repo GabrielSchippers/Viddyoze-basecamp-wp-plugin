@@ -4,7 +4,7 @@
  * 
  * Generates the list of famous quotes to be displayed in the plugin's main admin page.
  *
- * @package Quotes Collection
+ * @package Famous Quotes
  */
 
 if(!class_exists('WP_List_Table')){
