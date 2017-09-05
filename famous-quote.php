@@ -4,9 +4,7 @@
  * Description: Famous Quotes plugin with Ajax powered Random Quote sidebar widget helps you collect and display your favourite quotes in your WordPress blog/website.
  * Version: 0.0.1
  * Author: Gabriel Schippers
- * Text Domain: famous-qute
  * Domain Path: /languages/
- * License: GPL2
  */
 
 /*  
@@ -15,6 +13,11 @@
 
 /** Prevent direct access to the file **/
 defined( 'ABSPATH' ) or die( 'Access denied' );
+
+if( is_admin() ) {
+	require_once( 'inc/famous-quotes-admin-list-table.php' );
+	require_once( 'inc/famous-quotes-admin.php' );
+}
 
 register_activation_hook( __FILE__, array( 'Quotes_Collection', 'activate' ) );
 add_action( 'plugins_loaded', array( 'Quotes_Collection', 'load' ) );
@@ -69,15 +72,6 @@ function famousquotescollection_quote( $args = NULL ) {
 
 }
 
-/** Returns the plugin's url. If $path is passed, it's appended. */
-function famousquotescollection_url( $path = "" ) {
-	// If $path comes with a slash, remove it as the function be adding
-	if( $path && '/' == $path[0]) {
-		$path = substr( $path, 1 );
-	}
-	return plugins_url( $path, __FILE__ );
-}
-
 /** Returns the plugin's home directory. If $path is passed, it's appended. */
 function famousquotescollection_rel_path( $path = "" ) {
 	// If $path comes with a slash, remove it as we'll be adding
@@ -87,5 +81,12 @@ function famousquotescollection_rel_path( $path = "" ) {
 	return dirname( plugin_basename( __FILE__) ) . '/'. $path;
 }
 
-
+/** Returns the plugin's url. If $path is passed, it's appended. */
+function famousquotescollection_url( $path = "" ) {
+	// If $path comes with a slash, remove it as the function be adding
+	if( $path && '/' == $path[0]) {
+		$path = substr( $path, 1 );
+	}
+	return plugins_url( $path, __FILE__ );
+}
 ?>
