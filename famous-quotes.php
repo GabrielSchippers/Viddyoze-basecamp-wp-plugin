@@ -14,14 +14,16 @@
 /** Prevent direct access to the file **/
 defined( 'ABSPATH' ) or die( 'Access denied' );
 
+require_once( 'inc/famous-quotes-collection.php' );
+include_once( 'inc/famous-quotes-collection-widget.php' );
 if( is_admin() ) {
 	require_once( 'inc/famous-quotes-admin-list-table.php' );
 	require_once( 'inc/famous-quotes-admin.php' );
 }
 
-register_activation_hook( __FILE__, array( 'Quotes_Collection', 'activate' ) );
-add_action( 'plugins_loaded', array( 'Quotes_Collection', 'load' ) );
-add_action('widgets_init', array( 'Quotes_Collection_Widget', 'register' ) );
+register_activation_hook( __FILE__, array( 'Famous_Quotes_Collection', 'activate' ) );
+add_action( 'plugins_loaded', array( 'Famous_Quotes_Collection', 'load' ) );
+add_action('widgets_init', array( 'Famous_Quotes_Collection_Widget', 'register' ) );
 
 
 /**

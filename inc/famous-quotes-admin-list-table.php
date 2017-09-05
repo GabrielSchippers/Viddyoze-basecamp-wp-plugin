@@ -59,8 +59,8 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 			);
 
 		$actions = array(
-			'edit'      => '<a href="'.$edit_link.'">' . __('Edit', 'quotes-collection') . '</a>',
-			'delete'    => '<a href="'.$delete_link.'">' . __('Delete', 'quotes-collection') . '</a>',
+			'edit'      => '<a href="'.$edit_link.'">' . __('Edit', 'famous-quotes-collection') . '</a>',
+			'delete'    => '<a href="'.$delete_link.'">' . __('Delete', 'famous-quotes-collection') . '</a>',
 		);
 		
 		//Return the title contents
@@ -89,10 +89,10 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 
 	function column_date( $item ) {
 		$date = date_create( $item['time_added'] );
-		$abbr_title = date_format( $date, _x('Y/m/d h:i:s A', 'date and time format', 'quotes-collection') );
-		$date_display = date_format( $date, _x( 'Y/m/d', 'date format', 'quotes-collection') );
+		$abbr_title = date_format( $date, _x('Y/m/d h:i:s A', 'date and time format', 'famous-quotes-collection') );
+		$date_display = date_format( $date, _x( 'Y/m/d', 'date format', 'famous-quotes-collection') );
 		$display = '<div class="date"><abbr title="'.$abbr_title.'">'.$date_display.'</abbr></div>';
-		$public_display = ($item['public'] == 'no')?__('Private', 'quotes-collection'):__('Public', 'quotes-collection');
+		$public_display = ($item['public'] == 'no')?__('Private', 'famous-quotes-collection'):__('Public', 'famous-quotes-collection');
 		$display .= '<div class="public">'.$public_display.'</div>';
 		return $display;
 	}
@@ -107,10 +107,10 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 	function get_columns(){
 		$columns = array(
 			'cb'         => '<input type="checkbox" />', //Render a checkbox instead of text
-			'quote_id'	 => __('ID', 'quotes-collection'),
-			'quote'      => __('Quote', 'quotes-collection'),
-			'tags'       => __('Tags', 'quotes-collection'),
-			'date'       => __('Date', 'quotes-collection')
+			'quote_id'	 => __('ID', 'famous-quotes-collection'),
+			'quote'      => __('Quote', 'famous-quotes-collection'),
+			'tags'       => __('Tags', 'famous-quotes-collection'),
+			'date'       => __('Date', 'famous-quotes-collection')
 		);
 		return $columns;
 	}
@@ -127,9 +127,9 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 
 	function get_bulk_actions() {
 		$actions = array(
-			'bulk_delete'   => __('Delete', 'quotes-collection'),
-			'make_public'   => __('Make public', 'quotes-collection'),
-			'keep_private'  => __('Keep private', 'quotes-collection'),
+			'bulk_delete'   => __('Delete', 'famous-quotes-collection'),
+			'make_public'   => __('Make public', 'famous-quotes-collection'),
+			'keep_private'  => __('Keep private', 'famous-quotes-collection'),
 		);
 		return $actions;
 	}

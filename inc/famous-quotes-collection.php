@@ -14,7 +14,7 @@ class Famous_Quotes_Collection {
 	public $auto_refresh_max;
 
 	function __construct() {
-		load_plugin_textdomain( 'quotes-collection', false, quotescollection_rel_path( 'languages' ) );
+		load_plugin_textdomain( 'famous-quotes-collection', false, quotescollection_rel_path( 'languages' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts_and_styles' ) );
 		add_action( 'wp_ajax_quotescollection', array( $this, 'ajax_response' ) );
 		add_action( 'wp_ajax_nopriv_quotescollection', array( $this, 'ajax_response' ) );
@@ -78,8 +78,8 @@ class Famous_Quotes_Collection {
 			'nonce' => wp_create_nonce( 'quotescollection' ),
 
 			'nextQuote' => $this->refresh_link_text,
-			'loading' => __('Loading...', 'quotes-collection'),
-			'error' => __('Error getting quote', 'quotes-collection'),
+			'loading' => __('Loading...', 'famous-quotes-collection'),
+			'error' => __('Error getting quote', 'famous-quotes-collection'),
 			'autoRefreshMax' => $this->auto_refresh_max,
 			'autoRefreshCount' => 0
 			)
@@ -89,7 +89,7 @@ class Famous_Quotes_Collection {
 
 	/** Initialize the plugin options **/
 	private function initialize_options() {
-		$this->refresh_link_text = __("Next quote &raquo;", 'quotes-collection');
+		$this->refresh_link_text = __("Next quote &raquo;", 'famous-quotes-collection');
 		$this->auto_refresh_max = 20;
 		if( $options = get_option( 'quotescollection' ) ) {
 			if( isset($options['refresh_link_text']) && $options['refresh_link_text'] ) {
@@ -125,7 +125,7 @@ class Famous_Quotes_Collection {
 			'random'         => 1,
 			'auto_refresh'   => 0,
 			'tags'           => '',
-			'char_limit'     => 500,
+			'char_limit'     => 1000,
 			'echo'           => 1,
 		);
 
@@ -141,7 +141,7 @@ class Famous_Quotes_Collection {
 				$auto_refresh = $args['auto_refresh'];
 			}
 			else if( true === $args['auto_refresh'] ) {
-				$auto_refresh = 5;
+				$auto_refresh = 10;
 			}
 		}
 
@@ -151,7 +151,7 @@ class Famous_Quotes_Collection {
 		$tags = ( is_string( $args['tags'] ) )? $args['tags'] : '';
 
 		// Only a numeral can be passed as char_limit
-		$char_limit = ( is_numeric($args['char_limit']) )? $args['char_limit'] : 500;
+		$char_limit = ( is_numeric($args['char_limit']) )? $args['char_limit'] : 1000;
 
 		// By default, we fetch a random quote
 		$orderby = 'random';

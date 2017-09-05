@@ -37,7 +37,7 @@ class Famous_Quotes_Collection_Admin {
 
 	/** Constructor **/
 	public function __construct() {
-		add_filter( 'set-screen-option', array($this, 'set_screen_options'), 10, 3 );
+		add_filter( 'set-screen-option', array($this, 'set_screen_options'), 10, 4 );
 		add_action( 'current_screen', array($this, 'process_requests') );
 		add_action( 'admin_menu', array($this, 'admin_menus') );
 		add_action( 'admin_notices', array($this, 'display_notices'));
@@ -50,7 +50,7 @@ class Famous_Quotes_Collection_Admin {
 	 */
 	public function admin_menus() {
 
-		$main_slug = 'quotes-collection';
+		$main_slug = 'famous-quotes-collection';
 		$add_new_slug = 'quotes-collection-add-new';
 		$import_slug = 'quotes-collection-import';
 		$export_slug = 'quotes-collection-export';
@@ -59,21 +59,21 @@ class Famous_Quotes_Collection_Admin {
 		// Top level menu item for the main admin page that holds the quotes list
 		$this->main_page_id = 
 			add_menu_page(
-				'Quotes Collection',                    // page title
-				'Quotes Collection',                    // menu title
-				self::USER_LEVEL_MANAGE_QUOTES,         // user level
-				$main_slug,                             // menu-slg 
-				array($this, 'admin_page_main'),        // callback function 
-				'dashicons-testimonial',                // icon
-				50										// position
+				'Famous Quotes Collection',                 // page title
+				'Famous Quotes Collection',                 // menu title
+				self::USER_LEVEL_MANAGE_QUOTES,             // user level
+				$main_slug,                                 // menu-slg 
+				array($this, 'admin_page_main'),            // callback function 
+				'dashicons-testimonial',                    // icon
+				100										    // position
 			);
 
 		// Sub-menu item for 'Add Quote' page
 		$this->add_new_quote_page_id = 
 			add_submenu_page(
-				'quotes-collection', 
-				_x('Add New Quote', 'heading', 'quotes-collection'), 
-				_x('Add New', 'submenu item text', 'quotes-collection'), 
+				'famous-quotes-collection', 
+				_x('Add New Quote', 'heading', 'famous-quotes-collection'), 
+				_x('Add New', 'submenu item text', 'famous-quotes-collection'), 
 				self::USER_LEVEL_MANAGE_QUOTES, 
 				$add_new_slug, 
 				array($this, 'admin_page_add_new') 
@@ -82,9 +82,9 @@ class Famous_Quotes_Collection_Admin {
 		// Sub-menu item for 'Import Quotes' page
 		$this->import_page_id = 
 			add_submenu_page(
-				'quotes-collection', 
-				_x('Import Quotes', 'heading', 'quotes-collection'), 
-				_x('Import', 'submenu item text', 'quotes-collection'), 
+				'famous-quotes-collection', 
+				_x('Import Quotes', 'heading', 'famous-quotes-collection'), 
+				_x('Import', 'submenu item text', 'famous-quotes-collection'), 
 				self::USER_LEVEL_IMPORT_EXPORT, 
 				$import_slug, 
 				array($this, 'admin_page_import')
@@ -93,9 +93,9 @@ class Famous_Quotes_Collection_Admin {
 		// Sub-menu item for 'Export Quotes' page
 		$this->export_page_id = 
 			add_submenu_page(
-				'quotes-collection', 
-				_x('Export Quotes', 'heading', 'quotes-collection'), 
-				_x('Export', 'submenu item text', 'quotes-collection'), 
+				'famous-quotes-collection', 
+				_x('Export Quotes', 'heading', 'famous-quotes-collection'), 
+				_x('Export', 'submenu item text', 'famous-quotes-collection'), 
 				self::USER_LEVEL_IMPORT_EXPORT, 
 				$export_slug, 
 				array($this, 'admin_page_export')
@@ -104,9 +104,9 @@ class Famous_Quotes_Collection_Admin {
 		// Sub-menu item for the plugin options page
 		$this->options_page_id = 
 			add_submenu_page(
-				'quotes-collection', 
-				_x('Quotes Collection Options', 'heading', 'quotes-collection'), 
-				_x('Options', 'submenu item text', 'quotes-collection'), 
+				'famous-quotes-collection', 
+				_x('Quotes Collection Options', 'heading', 'famous-quotes-collection'), 
+				_x('Options', 'submenu item text', 'famous-quotes-collection'), 
 				self::USER_LEVEL_MANAGE_OPTIONS, 
 				$options_slug, 
 				array($this, 'admin_page_options')
@@ -115,7 +115,7 @@ class Famous_Quotes_Collection_Admin {
 
 		// Just to make the first sub-menu item distinct from the main menu item
 		global $submenu;
-		$submenu[$main_slug][0][0] = _x('All Quotes', 'submenu item text', 'quotes-collection');
+		$submenu[$main_slug][0][0] = _x('All Quotes', 'submenu item text', 'famous-quotes-collection');
 
 		// Updating the member variables that hold URLs of different admin pages
 		$this->admin_url = admin_url( 'admin.php?page=' . $main_slug );
@@ -149,14 +149,14 @@ class Famous_Quotes_Collection_Admin {
 			&& $_REQUEST['action'] == 'edit'
 			&& (
 				( isset( $_REQUEST['submit'] )			
-					&& $_REQUEST['submit'] == _x( 'Save Changes', 'submit button text', 'quotes-collection') )
+					&& $_REQUEST['submit'] == _x( 'Save Changes', 'submit button text', 'famous-quotes-collection') )
 				|| check_admin_referer( 'edit_quote_'.$_REQUEST['id'], 'quotescollection_nonce' )
 			)
 		) {
 			$this->admin_page_header( 'edit-quote' );
 			$this->pseudo_meta_box( 
 				'edit-quote',
-				_x( 'Edit Quote', 'submenu item text', 'quotes-collection' ),
+				_x( 'Edit Quote', 'submenu item text', 'famous-quotes-collection' ),
 				$this->editform($_REQUEST['id'])
 			);
 			$this->admin_page_footer();
@@ -187,23 +187,23 @@ class Famous_Quotes_Collection_Admin {
 		$list_meta = '<p class="list-meta">';
 		$list_meta .= '<span' . $all_quotes_class .'>'
 			. '<a href="' . $this->admin_url . '">' 
-			. _x( 'All Quotes', 'list meta, above the quotes list table in the main admin page', 'quotes-collection' ) 
+			. _x( 'All Quotes', 'list meta, above the quotes list table in the main admin page', 'famous-quotes-collection' ) 
 			. ' <span class="count">(' . $quotes_list_table->total_items . ')</span>'
 			. '</a></span>';
 		$list_meta .= ' | <span' . $public_quotes_class .'>'
 			. '<a href="' . $this->admin_url . '&public=yes">' 
-			. _x( 'Public', 'list meta, above the quotes list table in the main admin page', 'quotes-collection' ) 
+			. _x( 'Public', 'list meta, above the quotes list table in the main admin page', 'famous-quotes-collection' ) 
 			. ' <span class="count">(' . $total_public_items . ')</span>'
 			. '</a></span>';
 		$list_meta .= ' | <span' . $private_quotes_class .'>'
 			. '<a href="' . $this->admin_url . '&public=no">' 
-			. _x( 'Private', 'list meta, above the quotes list table in the main admin page', 'quotes-collection' ) 
+			. _x( 'Private', 'list meta, above the quotes list table in the main admin page', 'famous-quotes-collection' ) 
 			. ' <span class="count">(' . $total_private_items . ')</span>'
 			. '</a></span>';
 		if( isset( $_REQUEST['s'] ) && !empty( $_REQUEST['s'] ) ) {
 			$search_query = stripslashes( strip_tags( $_REQUEST['s'] ) );
 			$list_meta .= ' | <span class="current">' 
-				. sprintf( _x( 'Search results for "%s"', 'list meta, above the quotes list table in the main admin page', 'quotes-collection' ), $search_query )
+				. sprintf( _x( 'Search results for "%s"', 'list meta, above the quotes list table in the main admin page', 'famous-quotes-collection' ), $search_query )
 				. ' <span class="count">(' . $quotes_list_table->total_list_items . ')</span>'
 				. '</span>';
 		} 
@@ -219,7 +219,7 @@ class Famous_Quotes_Collection_Admin {
 		<input type="hidden" name="page" value="<?php echo esc_attr( $_REQUEST['page'] ); ?>" />
 			<div class="list-header">
 				<?php echo $list_meta; ?>
-				<?php $quotes_list_table->search_box( __('Search', 'quotes-collection'), 'quotescollection'); ?>
+				<?php $quotes_list_table->search_box( __('Search', 'famous-quotes-collection'), 'quotescollection'); ?>
 			</div>
 			<?php $quotes_list_table->display(); ?>
 		</form>
@@ -240,7 +240,7 @@ class Famous_Quotes_Collection_Admin {
 
 		$this->pseudo_meta_box( 
 			'add-new-quote',
-			_x( 'Add New Quote', 'heading', 'quotes-collection' ),
+			_x( 'Add New Quote', 'heading', 'famous-quotes-collection' ),
 			$this->editform()
 		);
 
@@ -254,17 +254,17 @@ class Famous_Quotes_Collection_Admin {
 	public function admin_page_import() {
 
 		$meta_box_content = 
-			'<p>' . __( "Browse and choose a <abbr title=\"JavaScript Object Notation\">JSON</abbr> (.json) file to upload, then click the 'Import' button.", 'quotes-collection') . '</p>'
+			'<p>' . __( "Browse and choose a <abbr title=\"JavaScript Object Notation\">JSON</abbr> (.json) file to upload, then click the 'Import' button.", 'famous-quotes-collection') . '</p>'
 			. '<div class="form-wrap">'
 			. '<form name="" method="post" action="' . $this->admin_import_url . '"  enctype="multipart/form-data">'
 				. wp_nonce_field( 'import_quotes',	'quotescollection_nonce', true, false )
 				. '<div class="form-field">'
-					. '<label for="import-file">'. __('Choose a file to upload:', 'quotes-collection')
+					. '<label for="import-file">'. __('Choose a file to upload:', 'famous-quotes-collection')
 					. '&nbsp;<input type="file" id="import-file" name="quotescollection-data-file" />'
 					. '</label>'
 				. '</div>'
 				. '<div class="form-field">'
-					. get_submit_button( _x('Import', 'submit button text', 'quotes-collection'), 'primary large', 'submit', false)
+					. get_submit_button( _x('Import', 'submit button text', 'famous-quotes-collection'), 'primary large', 'submit', false)
 				. '</div>'
 			. '</form>'
 		. '</div>';
@@ -273,7 +273,7 @@ class Famous_Quotes_Collection_Admin {
 
 		$this->pseudo_meta_box( 
 			'import',
-			_x( 'Import Quotes', 'heading', 'quotes-collection' ),
+			_x( 'Import Quotes', 'heading', 'famous-quotes-collection' ),
 			$meta_box_content
 		);
 
@@ -286,12 +286,12 @@ class Famous_Quotes_Collection_Admin {
 	 */
 	public function admin_page_export() {
 		$meta_box_content = 
-			'<p>' . __("When you click the button below, a <abbr title=\"JavaScript Object Notation\">JSON</abbr> file with the entire collection of quotes will be created, that you can save to your computer.", 'quotes-collection') . '</p>'
+			'<p>' . __("When you click the button below, a <abbr title=\"JavaScript Object Notation\">JSON</abbr> file with the entire collection of quotes will be created, that you can save to your computer.", 'famous-quotes-collection') . '</p>'
 			. '<div class="form-wrap">'
 				. '<form name="" method="post" action="">'
 					. wp_nonce_field( 'export_quotes',	'quotescollection_nonce', true, false )
 					. '<div class="form-field">'
-						. get_submit_button( _x('Export', 'submit button text', 'quotes-collection'), 'primary large', 'submit', false)
+						. get_submit_button( _x('Export', 'submit button text', 'famous-quotes-collection'), 'primary large', 'submit', false)
 					. '</div>'
 				. '</form>'
 			. '</div>'
@@ -301,7 +301,7 @@ class Famous_Quotes_Collection_Admin {
 
 		$this->pseudo_meta_box( 
 			'export',
-			_x( 'Export Quotes', 'heading', 'quotes-collection' ),
+			_x( 'Export Quotes', 'heading', 'famous-quotes-collection' ),
 			$meta_box_content
 		);
 
@@ -338,21 +338,21 @@ class Famous_Quotes_Collection_Admin {
 				. '<form name="quotescollection_options" method="post" action="'.$this->admin_options_url.'">'
 					. wp_nonce_field( 'options', 'quotescollection_nonce', true, false )
 					. '<div class="form-field">'
-						. '<label for="refresh_link_text">' . __("Refresh link text", 'quotes-collection') . '</label>'
+						. '<label for="refresh_link_text">' . __("Refresh link text", 'famous-quotes-collection') . '</label>'
 						. '<input type="text" name="refresh_link_text" id="refresh_link_text" value="'.$refresh_link_text.'" style="width: 10em;" />'
 					. '</div>'
 					. '<div class="form-field">'
-						. '<label for="auto_refresh_max">' . __('Maximum number of iterations for auto-refresh', 'quotes-collection') . '</label>'
+						. '<label for="auto_refresh_max">' . __('Maximum number of iterations for auto-refresh', 'famous-quotes-collection') . '</label>'
 						. '<input type="number" name="auto_refresh_max" id="auto_refresh_max" value="'.$auto_refresh_max.'" max="40" min="5" step="1" style="width: 3em;" />'
 					. '</div>'
 					. '<div class="form-field">'
-						. '<label for="dynamic_fetch">' . __('Dynamically fetch the first random quote in widget?', 'quotes-collection') 
+						. '<label for="dynamic_fetch">' . __('Dynamically fetch the first random quote in widget?', 'famous-quotes-collection') 
 						. '&nbsp;<input type="checkbox" name="dynamic_fetch" id="dynamic_fetch"'.$dynamic_fetch_check.' />'
 						. '</label>'
-						. '<p>'. __("Check this if your site is cached and the 'random quote' widget always shows a particular quote as the initial quote.", 'quotes-collection').'</p>'
+						. '<p>'. __("Check this if your site is cached and the 'random quote' widget always shows a particular quote as the initial quote.", 'famous-quotes-collection').'</p>'
 					. '</div>'
 
-					. get_submit_button( _x('Update Options', 'submit button text', 'quotes-collection'), 'primary large', 'submit', false)
+					. get_submit_button( _x('Update Options', 'submit button text', 'famous-quotes-collection'), 'primary large', 'submit', false)
 				. '</form>'
 			. '</div>'
 		;
@@ -361,7 +361,7 @@ class Famous_Quotes_Collection_Admin {
 
 		$this->pseudo_meta_box( 
 			'options',
-			_x( 'Quotes Collection Options', 'heading', 'quotes-collection' ),
+			_x( 'Quotes Collection Options', 'heading', 'famous-quotes-collection' ),
 			$meta_box_content
 		);
 
@@ -380,30 +380,30 @@ class Famous_Quotes_Collection_Admin {
 			
 			<?php if( current_user_can( self::USER_LEVEL_MANAGE_QUOTES ) ): ?>
 				<a href="<?php echo $this->admin_url; ?>" class="nav-tab<?php echo ( 'quotes-list' == $active_page )? ' nav-tab-active' : '';?>">
-					<?php _e( 'All Quotes', 'quotes-collection' ); ?>
+					<?php _e( 'All Quotes', 'famous-quotes-collection' ); ?>
 				</a>
 				<?php if( 'edit-quote' == $active_page ): ?>
 					<a href="#" class="nav-tab nav-tab-active">
-						<?php _ex( 'Edit Quote', 'submenu item text', 'quotes-collection' ); ?>
+						<?php _ex( 'Edit Quote', 'submenu item text', 'famous-quotes-collection' ); ?>
 					</a>
 				<?php endif; ?>
 				<a href="<?php echo $this->admin_add_new_url; ?>" class="nav-tab<?php echo ( 'add-new' == $active_page )? ' nav-tab-active' : '';?>">
-					<?php _ex( 'Add New', 'submenu item text', 'quotes-collection' ); ?>
+					<?php _ex( 'Add New', 'submenu item text', 'famous-quotes-collection' ); ?>
 				</a>
 			<?php endif; ?>
 			
 			<?php if( current_user_can( self::USER_LEVEL_IMPORT_EXPORT ) ): ?>
 				<a href="<?php echo $this->admin_import_url; ?>" class="nav-tab<?php echo ( 'import' == $active_page )? ' nav-tab-active' : '';?>">
-					<?php _ex( 'Import', 'submenu item text', 'quotes-collection' ); ?>
+					<?php _ex( 'Import', 'submenu item text', 'famous-quotes-collection' ); ?>
 				</a>
 				<a href="<?php echo $this->admin_export_url; ?>" class="nav-tab<?php echo ( 'export' == $active_page )? ' nav-tab-active' : '';?>">
-					<?php _ex( 'Export', 'submenu item text', 'quotes-collection' ); ?>
+					<?php _ex( 'Export', 'submenu item text', 'famous-quotes-collection' ); ?>
 				</a>
 			<?php endif; ?>
 			
 			<?php if( current_user_can( self::USER_LEVEL_MANAGE_OPTIONS ) ): ?>
 				<a href="<?php echo $this->admin_options_url; ?>" class="nav-tab<?php echo ( 'options' == $active_page )? ' nav-tab-active' : '';?>">
-					<?php _ex( 'Options', 'submenu item text', 'quotes-collection' ); ?>
+					<?php _ex( 'Options', 'submenu item text', 'famous-quotes-collection' ); ?>
 				</a>
 			<?php endif; ?>
 
@@ -465,7 +465,7 @@ class Famous_Quotes_Collection_Admin {
 			$tags = ( isset($_REQUEST['tags']) && trim($_REQUEST['tags']) )? stripslashes(htmlspecialchars(trim($_REQUEST['tags']))): "";
 			$public_selected =( !isset($_REQUEST['public']) && ($quote || $author || $source || $tags) )? "": " checked=\"checked\"";
 		}
-		$submit_button = get_submit_button( _x('Add Quote', 'submit button text', 'quotes-collection'), 'primary large', 'submit', false);
+		$submit_button = get_submit_button( _x('Add Quote', 'submit button text', 'famous-quotes-collection'), 'primary large', 'submit', false);
 		$nonce_action_name = 'add_quote';
 		$hidden_input = "";
 
@@ -482,7 +482,7 @@ class Famous_Quotes_Collection_Admin {
 				}
 			}
 			$hidden_input = "<input type=\"hidden\" name=\"quote_id\" value=\"{$quote_id}\" />";
-			$submit_button = get_submit_button( _x('Save Changes', 'submit button text', 'quotes-collection'), 'primary large', 'submit', false);
+			$submit_button = get_submit_button( _x('Save Changes', 'submit button text', 'famous-quotes-collection'), 'primary large', 'submit', false);
 			$action_url =  $this->admin_url . '&action=edit&id=' . $quote_id;
 			$nonce_action_name = 'save_changes_'.$quote_id;
 		}
@@ -494,13 +494,13 @@ class Famous_Quotes_Collection_Admin {
 			false                          // Echo
 		);
 
-		$quote_label = __('Quote', 'quotes-collection');
-		$author_label = __('Author', 'quotes-collection');
-		$source_label = __('Source', 'quotes-collection');
-		$tags_label = __('Tags', 'quotes-collection');
-		$public_label = __('Public?', 'quotes-collection');
-		$optional_text = __('optional', 'quotes-collection');
-		$comma_separated_text = __('comma separated', 'quotes-collection');
+		$quote_label = __('Quote', 'famous-quotes-collection');
+		$author_label = __('Author', 'famous-quotes-collection');
+		$source_label = __('Source', 'famous-quotes-collection');
+		$tags_label = __('Tags', 'famous-quotes-collection');
+		$public_label = __('Public?', 'famous-quotes-collection');
+		$optional_text = __('optional', 'famous-quotes-collection');
+		$comma_separated_text = __('comma separated', 'famous-quotes-collection');
 		
 
 		$display =<<< EDITFORM
@@ -568,50 +568,50 @@ EDITFORM;
 
 		if(isset($_REQUEST['submit'])) {
 			if(
-				$_REQUEST['submit'] == _x('Add Quote', 'submit button text', 'quotes-collection')
+				$_REQUEST['submit'] == _x('Add Quote', 'submit button text', 'famous-quotes-collection')
 				&& check_admin_referer( 'add_quote', 'quotescollection_nonce' ) // Check nonce
 				) {
 				if( !isset( $_REQUEST['quote'] ) || false == trim( $_REQUEST['quote'] ) ) {
-					$this->notices = '<div class="error"><p>'.__("The quote field cannot be blank. Fill up the quote field and try again.", 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__("The quote field cannot be blank. Fill up the quote field and try again.", 'famous-quotes-collection').'</p></div>';
 				}
 				else if( $result = $quotescollection_db->put_quote($_REQUEST) ) {
-					$this->notices = '<div class="updated"><p>'.__('Quote added', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="updated"><p>'.__('Quote added', 'famous-quotes-collection').'</p></div>';
 					$this->quote_added = true; // set the flag
 				}
 				else {
-					$this->notices = '<div class="error"><p>'.__('Error adding quote', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('Error adding quote', 'famous-quotes-collection').'</p></div>';
 				}
 					
 			}
 			else if(
-				$_REQUEST['submit'] == _x('Save Changes', 'submit button text', 'quotes-collection')
+				$_REQUEST['submit'] == _x('Save Changes', 'submit button text', 'famous-quotes-collection')
 				&& check_admin_referer( 'save_changes_'.$_REQUEST['quote_id'], 'quotescollection_nonce' )
 				) {
 				if( !isset( $_REQUEST['quote'] ) || false == trim( $_REQUEST['quote'] ) ) {
-					$this->notices = '<div class="error"><p>'.__("The quote field cannot be blank. Fill up the quote field and try again.", 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__("The quote field cannot be blank. Fill up the quote field and try again.", 'famous-quotes-collection').'</p></div>';
 				}
 				else if($result = $quotescollection_db->update_quote($_REQUEST)) {
-					$this->notices = '<div class="updated"><p>'.__('Changes saved', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="updated"><p>'.__('Changes saved', 'famous-quotes-collection').'</p></div>';
 					$this->quote_updated = true; // set the flag
 				}
 				else 
-					$this->notices = '<div class="error"><p>'.__('Error updating quote', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('Error updating quote', 'famous-quotes-collection').'</p></div>';
 					
 			}
 			else if(
-				$_REQUEST['submit'] == _x('Import', 'submit button text', 'quotes-collection')
+				$_REQUEST['submit'] == _x('Import', 'submit button text', 'famous-quotes-collection')
 				&& check_admin_referer( 'import_quotes', 'quotescollection_nonce' )
 				) {
 				$this->process_import();
 			}
 			else if(
-				$_REQUEST['submit'] == _x('Export', 'submit button text', 'quotes-collection')
+				$_REQUEST['submit'] == _x('Export', 'submit button text', 'famous-quotes-collection')
 				&& check_admin_referer( 'export_quotes', 'quotescollection_nonce' )
 				) {
 				$this->process_export();
 			}
 			else if(
-				$_REQUEST['submit'] == _x('Update Options', 'submit button text', 'quotes-collection')
+				$_REQUEST['submit'] == _x('Update Options', 'submit button text', 'famous-quotes-collection')
 				&& check_admin_referer( 'options', 'quotescollection_nonce' )
 				) {
 				$this->update_options();
@@ -625,49 +625,49 @@ EDITFORM;
 				&& check_admin_referer( 'delete_quote_'.$_REQUEST['id'], 'quotescollection_nonce' )
 				) {
 				if( $result = $quotescollection_db->delete_quote($_REQUEST['id']) ) 
-					$this->notices = '<div class="updated"><p>'.__('Quote deleted', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="updated"><p>'.__('Quote deleted', 'famous-quotes-collection').'</p></div>';
 				else
-					$this->notices = '<div class="error"><p>'.__('Error deleting quote', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('Error deleting quote', 'famous-quotes-collection').'</p></div>';
 			}
 			else if( ( 'bulk_delete' == $_REQUEST['action'] || ( isset( $_REQUEST['action2'] ) && 'bulk_delete' == $_REQUEST['action2'] ) )
 				&& check_admin_referer('bulk-quote_entries') ) {
 				if( !isset( $_REQUEST['bulkcheck'] ) ) {
-					$this->notices = '<div class="error"><p>'.__('No item selected', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('No item selected', 'famous-quotes-collection').'</p></div>';
 				}
 				else if( $result = $quotescollection_db->delete_quotes( $_REQUEST['bulkcheck'] ) ) {
 					$this->notices = '<div class="updated"><p>'
-						. sprintf( _n( 'One quote deleted', '%d quotes deleted', $result, 'quotes-collection' ), $result )
+						. sprintf( _n( 'One quote deleted', '%d quotes deleted', $result, 'famous-quotes-collection' ), $result )
 						.'</p></div>';
 				}
 				else {
-					$this->notices = '<div class="error"><p>'.__('Error deleting quotes', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('Error deleting quotes', 'famous-quotes-collection').'</p></div>';
 				}
 			}
 			else if( ( 'make_public' == $_REQUEST['action'] || ( isset( $_REQUEST['action2'] ) && 'make_public' == $_REQUEST['action2'] ) )
 				&& check_admin_referer('bulk-quote_entries') ) {
 				if( !isset( $_REQUEST['bulkcheck'] ) ) {
-					$this->notices = '<div class="error"><p>'.__('No item selected', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('No item selected', 'famous-quotes-collection').'</p></div>';
 				}
 				else if( $result = $quotescollection_db->change_visibility($_REQUEST['bulkcheck'], 'yes') ) {
 					$this->notices = '<div class="updated"><p>'
-						. sprintf( _n( 'Quote made public', '%d quotes made public', $result, 'quotes-collection' ), $result )
+						. sprintf( _n( 'Quote made public', '%d quotes made public', $result, 'famous-quotes-collection' ), $result )
 						.'</p></div>';
 				}
 				else
-					$this->notices = '<div class="error"><p>'.__('Error. Privacy status not changed.', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('Error. Privacy status not changed.', 'famous-quotes-collection').'</p></div>';
 			}
 			else if( ( 'keep_private' == $_REQUEST['action'] || ( isset( $_REQUEST['action2'] ) && 'keep_private' == $_REQUEST['action2'] ) )
 				&& check_admin_referer('bulk-quote_entries') ) {
 				if( !isset( $_REQUEST['bulkcheck'] ) ) {
-					$this->notices = '<div class="error"><p>'.__('No item selected', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('No item selected', 'famous-quotes-collection').'</p></div>';
 				}
 				else if( $result = $quotescollection_db->change_visibility($_REQUEST['bulkcheck'], 'no') ) {
 					$this->notices = '<div class="updated"><p>'
-						. sprintf( _n( 'Quote kept private', '%d quotes kept private', $result, 'quotes-collection' ), $result )
+						. sprintf( _n( 'Quote kept private', '%d quotes kept private', $result, 'famous-quotes-collection' ), $result )
 						.'</p></div>';
 				}
 				else
-					$this->notices = '<div class="error"><p>'.__('Error. Privacy status not changed.', 'quotes-collection').'</p></div>';
+					$this->notices = '<div class="error"><p>'.__('Error. Privacy status not changed.', 'famous-quotes-collection').'</p></div>';
 			}
 		}
 	}
@@ -679,19 +679,19 @@ EDITFORM;
 		if( $_FILES['quotescollection-data-file']['error'] == UPLOAD_ERR_NO_FILE
 			|| !is_uploaded_file( $_FILES['quotescollection-data-file']['tmp_name'] ) 
 			) {
-			$this->notices = '<div class="error"><p>' . __( "Please choose a file to upload before you hit the 'Import' button", 'quotes-collection' ) . '</p></div>';
+			$this->notices = '<div class="error"><p>' . __( "Please choose a file to upload before you hit the 'Import' button", 'famous-quotes-collection' ) . '</p></div>';
 			return;
 		}
 
 		$allowed_extensions = array( 'json', 'JSON' );
 		if( ! in_array( pathinfo( $_FILES['quotescollection-data-file']['name'], PATHINFO_EXTENSION ), $allowed_extensions ) ) {
-			$this->notices = '<div class="error"><p>' . __( "Invalid file format", 'quotes-collection' ) . '</p></div>';
+			$this->notices = '<div class="error"><p>' . __( "Invalid file format", 'famous-quotes-collection' ) . '</p></div>';
 			return;
 		}
 
 		if( $_FILES['quotescollection-data-file']['error'] == UPLOAD_ERR_INI_SIZE
 			|| $_FILES['quotescollection-data-file']['error'] == UPLOAD_ERR_FORM_SIZE ) {
-			$this->notices = '<div class="error"><p>' . __( "The file you uploaded is too big. Import failed.", 'quotes-collection' ) . '</p></div>';
+			$this->notices = '<div class="error"><p>' . __( "The file you uploaded is too big. Import failed.", 'famous-quotes-collection' ) . '</p></div>';
 			return;
 		}
 
@@ -699,12 +699,12 @@ EDITFORM;
 			&& is_uploaded_file( $_FILES['quotescollection-data-file']['tmp_name'] ) ) {   //checks that file is uploaded
 			
 			if( ! ( $json_data = file_get_contents( $_FILES['quotescollection-data-file']['tmp_name'] ) ) ) {
-				$this->notices = '<div class="error"><p>' . __( "The file uploaded was empty", 'quotes-collection' ) . '</p></div>';
+				$this->notices = '<div class="error"><p>' . __( "The file uploaded was empty", 'famous-quotes-collection' ) . '</p></div>';
 				return;
 			}
 		
 			if( is_null( $quote_entries = json_decode( $json_data, true ) ) ) {
-				$this->notices = '<div class="error"><p>' . __( "Error in JSON file", 'quotes-collection' ) . '</p></div>';
+				$this->notices = '<div class="error"><p>' . __( "Error in JSON file", 'famous-quotes-collection' ) . '</p></div>';
 				return;
 			}
 	
@@ -712,21 +712,21 @@ EDITFORM;
 			$result = $quotescollection_db->put_quotes($quote_entries);
 
 			if(FALSE === $result){
-				$this->notices = '<div class="error"><p>' . __( "Import failed. Please try again.", 'quotes-collection' ) . '</p></div>';
+				$this->notices = '<div class="error"><p>' . __( "Import failed. Please try again.", 'famous-quotes-collection' ) . '</p></div>';
 			}
 			else if( 0 === $result) {
-				$this->notices = '<div class="updated"><p>' . __( "No quotes imported", 'quotes-collection' ) . '</p></div>';
+				$this->notices = '<div class="updated"><p>' . __( "No quotes imported", 'famous-quotes-collection' ) . '</p></div>';
 			}
 			else {
 				$this->notices = '<div class="updated"><p>' 
-					. sprintf( _n( 'One quote imported', '%d quotes imported', $result, 'quotes-collection' ), $result )
+					. sprintf( _n( 'One quote imported', '%d quotes imported', $result, 'famous-quotes-collection' ), $result )
 					. '</p></div>';
 			}
 
 			return;
 		}
 		else {
-			$this->notices = '<div class="error"><p>' . __( "Import failed. Please try again.", 'quotes-collection' ) . '</p></div>';
+			$this->notices = '<div class="error"><p>' . __( "Import failed. Please try again.", 'famous-quotes-collection' ) . '</p></div>';
 			return;
 		}
 
@@ -739,7 +739,7 @@ EDITFORM;
 		global $quotescollection_db;
 		$args = array();
 		if( ! ( $quote_entries = $quotescollection_db->get_quotes_array($args) ) ) {
-			$this->notices = '<div class="error"><p>' . __( "Nothing to export", 'quotes-collection' ) . '</p></div>';
+			$this->notices = '<div class="error"><p>' . __( "Nothing to export", 'famous-quotes-collection' ) . '</p></div>';
 			return;
 		}
 		foreach( $quote_entries as $index => $quote_entry ) {
@@ -778,15 +778,15 @@ EDITFORM;
 		}
 
 		if( $options === $options_old ) {
-			$this->notices = '<div class="updated"><p>' . __( 'No change in values. Options not updated.', 'quotes-collection') . '</p></div>';
+			$this->notices = '<div class="updated"><p>' . __( 'No change in values. Options not updated.', 'famous-quotes-collection') . '</p></div>';
 			return;
 		}
 
 		if( update_option('quotescollection', $options) ) {
-			$this->notices = '<div class="updated"><p>' . __( 'Options updated', 'quotes-collection') . '</p></div>';
+			$this->notices = '<div class="updated"><p>' . __( 'Options updated', 'famous-quotes-collection') . '</p></div>';
 			return;
 		}
-		$this->notices = '<div class="error"><p>' . __( 'Options not updated', 'quotes-collection' ) . '</p></div>';
+		$this->notices = '<div class="error"><p>' . __( 'Options not updated', 'famous-quotes-collection' ) . '</p></div>';
 		return;
 	}
 
@@ -802,7 +802,7 @@ EDITFORM;
 	public function add_screen_options() {
 		$option = 'per_page';
 		$args = array (
-			'label' => __( 'Maximum items', 'quotes-collection' ),
+			'label' => __( 'Maximum items', 'famous-quotes-collection' ),
 			'default' => 20,
 			'option' => 'quotescollection_items_per_page',
 			);
@@ -832,11 +832,11 @@ EDITFORM;
 				'quotescollection-confirm-delete',
 				'quotescollectionConfirm',
 				array(
-					'dialogTitle' => _x('Delete?', 'confirmation dialog title', 'quotes-collection'),
-					'dialogTextSingular' => _x('Are you sure you want to delete this quote?', 'confirmation dialog text for deleting a single quote', 'quotes-collection'),
-					'dialogTextPlural' => _x('Are you sure you want to delete these quotes?', 'confirmation dialog text for deleting multiple quotes', 'quotes-collection'),
-					'buttonYes' => _x('Yes', 'confirmation dialog button text', 'quotes-collection'),
-					'buttonNo' => _x('No', 'confirmation dialog button text', 'quotes-collection'),
+					'dialogTitle' => _x('Delete?', 'confirmation dialog title', 'famous-quotes-collection'),
+					'dialogTextSingular' => _x('Are you sure you want to delete this quote?', 'confirmation dialog text for deleting a single quote', 'famous-quotes-collection'),
+					'dialogTextPlural' => _x('Are you sure you want to delete these quotes?', 'confirmation dialog text for deleting multiple quotes', 'famous-quotes-collection'),
+					'buttonYes' => _x('Yes', 'confirmation dialog button text', 'famous-quotes-collection'),
+					'buttonNo' => _x('No', 'confirmation dialog button text', 'famous-quotes-collection'),
 					)
 				);
 			wp_enqueue_style (  'wp-jquery-ui-dialog');
