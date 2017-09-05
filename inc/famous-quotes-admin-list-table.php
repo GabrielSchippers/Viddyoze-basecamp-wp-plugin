@@ -71,6 +71,7 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 
 	}
 
+
 	function column_tags( $item ) {
 		$tags = '';
 		if( $item['tags'] ) {
@@ -84,6 +85,16 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 			$tags .= '</ul>';
 		}
 		return $tags;
+	}
+
+	function column_date( $item ) {
+		$date = date_create( $item['time_added'] );
+		$abbr_title = date_format( $date, _x('Y/m/d h:i:s A', 'date and time format', 'quotes-collection') );
+		$date_display = date_format( $date, _x( 'Y/m/d', 'date format', 'quotes-collection') );
+		$display = '<div class="date"><abbr title="'.$abbr_title.'">'.$date_display.'</abbr></div>';
+		$public_display = ($item['public'] == 'no')?__('Private', 'quotes-collection'):__('Public', 'quotes-collection');
+		$display .= '<div class="public">'.$public_display.'</div>';
+		return $display;
 	}
 
 	function column_cb($item){
@@ -108,11 +119,20 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 		$sortable_columns = array(
 			'quote_id'   => array('quote_id', false),     
 			'quote'      => array('quote', false),
-			'date'       => array('time_added', false)
+			'date'       => array('time_added', false),
+            'author'     => array('author', false)
 		);
 		return $sortable_columns;
 	}
 
+	function get_bulk_actions() {
+		$actions = array(
+			'bulk_delete'   => __('Delete', 'quotes-collection'),
+			'make_public'   => __('Make public', 'quotes-collection'),
+			'keep_private'  => __('Keep private', 'quotes-collection'),
+		);
+		return $actions;
+	}
 
 
 

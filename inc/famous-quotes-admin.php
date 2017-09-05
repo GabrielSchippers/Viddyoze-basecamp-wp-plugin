@@ -230,6 +230,147 @@ class Famous_Quotes_Collection_Admin {
 	}
 
 
+
+	/**
+	 * Renders the add new page
+	 */
+	public function admin_page_add_new() {
+
+		$this->admin_page_header( 'add-new' );
+
+		$this->pseudo_meta_box( 
+			'add-new-quote',
+			_x( 'Add New Quote', 'heading', 'quotes-collection' ),
+			$this->editform()
+		);
+
+		$this->admin_page_footer();
+	}
+
+
+	/**
+	 * Renders the 'Import Quotes' admin page
+	 */
+	public function admin_page_import() {
+
+		$meta_box_content = 
+			'<p>' . __( "Browse and choose a <abbr title=\"JavaScript Object Notation\">JSON</abbr> (.json) file to upload, then click the 'Import' button.", 'quotes-collection') . '</p>'
+			. '<div class="form-wrap">'
+			. '<form name="" method="post" action="' . $this->admin_import_url . '"  enctype="multipart/form-data">'
+				. wp_nonce_field( 'import_quotes',	'quotescollection_nonce', true, false )
+				. '<div class="form-field">'
+					. '<label for="import-file">'. __('Choose a file to upload:', 'quotes-collection')
+					. '&nbsp;<input type="file" id="import-file" name="quotescollection-data-file" />'
+					. '</label>'
+				. '</div>'
+				. '<div class="form-field">'
+					. get_submit_button( _x('Import', 'submit button text', 'quotes-collection'), 'primary large', 'submit', false)
+				. '</div>'
+			. '</form>'
+		. '</div>';
+
+		$this->admin_page_header( 'import' );
+
+		$this->pseudo_meta_box( 
+			'import',
+			_x( 'Import Quotes', 'heading', 'quotes-collection' ),
+			$meta_box_content
+		);
+
+		$this->admin_page_footer();
+	}
+
+
+	/**
+	 * Renders the 'Export Quotes' admin page
+	 */
+	public function admin_page_export() {
+		$meta_box_content = 
+			'<p>' . __("When you click the button below, a <abbr title=\"JavaScript Object Notation\">JSON</abbr> file with the entire collection of quotes will be created, that you can save to your computer.", 'quotes-collection') . '</p>'
+			. '<div class="form-wrap">'
+				. '<form name="" method="post" action="">'
+					. wp_nonce_field( 'export_quotes',	'quotescollection_nonce', true, false )
+					. '<div class="form-field">'
+						. get_submit_button( _x('Export', 'submit button text', 'quotes-collection'), 'primary large', 'submit', false)
+					. '</div>'
+				. '</form>'
+			. '</div>'
+		;
+
+		$this->admin_page_header( 'export' );
+
+		$this->pseudo_meta_box( 
+			'export',
+			_x( 'Export Quotes', 'heading', 'quotes-collection' ),
+			$meta_box_content
+		);
+
+		$this->admin_page_footer();
+	}
+
+
+	/**
+	 * Renders the options page
+	 */
+	public function admin_page_options() {
+
+		global $quotescollection;
+
+		$options = get_option( 'quotescollection' );
+
+		$refresh_link_text = 
+			( isset( $options['refresh_link_text'] ) && $options['refresh_link_text'] ) ? 
+				$options['refresh_link_text']
+				: $quotescollection->refresh_link_text;
+
+			// $refresh_link_text = htmlentities( $refresh_link_text );
+	
+		$auto_refresh_max = 
+			( isset( $options['auto_refresh_max'] ) && $options['auto_refresh_max'] ) ? 
+				$options['auto_refresh_max']
+				: $quotescollection->auto_refresh_max;
+
+		$dynamic_fetch_check = ( isset( $options['dynamic_fetch'] ) && 'on' == $options['dynamic_fetch'] )?' checked="checked"':'';
+
+
+		$meta_box_content = 
+			'<div class="form-wrap">'
+				. '<form name="quotescollection_options" method="post" action="'.$this->admin_options_url.'">'
+					. wp_nonce_field( 'options', 'quotescollection_nonce', true, false )
+					. '<div class="form-field">'
+						. '<label for="refresh_link_text">' . __("Refresh link text", 'quotes-collection') . '</label>'
+						. '<input type="text" name="refresh_link_text" id="refresh_link_text" value="'.$refresh_link_text.'" style="width: 10em;" />'
+					. '</div>'
+					. '<div class="form-field">'
+						. '<label for="auto_refresh_max">' . __('Maximum number of iterations for auto-refresh', 'quotes-collection') . '</label>'
+						. '<input type="number" name="auto_refresh_max" id="auto_refresh_max" value="'.$auto_refresh_max.'" max="40" min="5" step="1" style="width: 3em;" />'
+					. '</div>'
+					. '<div class="form-field">'
+						. '<label for="dynamic_fetch">' . __('Dynamically fetch the first random quote in widget?', 'quotes-collection') 
+						. '&nbsp;<input type="checkbox" name="dynamic_fetch" id="dynamic_fetch"'.$dynamic_fetch_check.' />'
+						. '</label>'
+						. '<p>'. __("Check this if your site is cached and the 'random quote' widget always shows a particular quote as the initial quote.", 'quotes-collection').'</p>'
+					. '</div>'
+
+					. get_submit_button( _x('Update Options', 'submit button text', 'quotes-collection'), 'primary large', 'submit', false)
+				. '</form>'
+			. '</div>'
+		;
+
+		$this->admin_page_header( 'options' );
+
+		$this->pseudo_meta_box( 
+			'options',
+			_x( 'Quotes Collection Options', 'heading', 'quotes-collection' ),
+			$meta_box_content
+		);
+
+		$this->admin_page_footer();
+
+	}
+
+
+	
 	private function admin_page_header( $active_page = "quotes-list" ) {
 		?>
 		<div id="quotescollection-admin-page" class="wrap">

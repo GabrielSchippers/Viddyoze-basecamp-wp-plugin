@@ -2,7 +2,7 @@
 /** 
  * Plugin Name: Famous Quote
  * Description: Famous Quotes plugin with Ajax powered Random Quote sidebar widget helps you collect and display your favourite quotes in your WordPress blog/website.
- * Version: 0.0.1
+ * Version: 1.0.0
  * Author: Gabriel Schippers
  * Domain Path: /languages/
  */
