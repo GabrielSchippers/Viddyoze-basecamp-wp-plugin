@@ -3,6 +3,7 @@
  * The Famous Quotes Collection Database Class
  * 
  * @package Famous Quotes
+ * @since 1.0.0
  */
 
 class Famous_Quotes_Collection_DB {
@@ -53,7 +54,7 @@ class Famous_Quotes_Collection_DB {
 		if( $quotes_array = $this->get_quotes_array( $args ) ) {
 			$quotes = array();
 			foreach( $quotes_array as $quote_data ) {
-				$quotes[] = new Quotes_Collection_Quote( $quote_data );
+				$quotes[] = new Famous_Quotes_Collection_Quote( $quote_data );
 			}
 			return $quotes;
 		}
@@ -69,10 +70,7 @@ class Famous_Quotes_Collection_DB {
 	}
 
 	/** 
-	 * Fetches quote entry with a specific ID 
-	 *
-	 * @param int $quote_id
-	 * @return array the quote entry
+	 * Fetches quote entry with a specific ID
 	 */
 	public function get_quote_with_id($quote_id) {
 		return $this->get_quote(array('quote_id' => $quote_id));
@@ -134,7 +132,7 @@ class Famous_Quotes_Collection_DB {
 		extract($quote_data);
 		
 	    $insert = $this->db->prepare( "INSERT INTO " . $this->table_name .
-			"(`quote`, `author`,  `tags`, `public`, `time_added`)" .
+			"(`quote`, `author`, `tags`, `public`, `time_added`)" .
 			"VALUES (%s, %s, %s, %s, NOW())" , $quote, $author, $tags, $public);	
 		
 		$result = $this->db->query($insert);
@@ -169,7 +167,7 @@ class Famous_Quotes_Collection_DB {
 
 			extract($quote_data);
 
-			array_push($values, $quote, $author,  $tags, $public);
+			array_push($values, $quote, $author, $tags, $public);
 
 			$placeholders[] = "(%s, %s,  %s, %s, NOW())";
 		}
@@ -247,9 +245,6 @@ class Famous_Quotes_Collection_DB {
 
 	/**
 	 * Function to make a set of entries private or public
-	 *
-	 * @param array $quote_ids an array of IDs of the entries to be updated
-	 * @param string $visibility should be'yes' or 'no'
 	 */
 	public function change_visibility($quote_ids, $visibility = 'yes') {
 		if( !$quote_ids || ($visibility != 'yes' && $visibility != 'no') )
@@ -426,15 +421,14 @@ class Famous_Quotes_Collection_DB {
 			if($condition) $condition .= " AND";
 			$condition .= " CHAR_LENGTH(`quote`) <= ".$args['char_limit'];
 		}
-		if($condition)
-			$condition = " WHERE".$condition;
-            
+
 		if(isset($args['public']) && ( $args['public'] == 'yes' || $args['public'] == 'no' ) ) {
 			if($condition) $condition .= " AND";
 			$condition .= " `public` = '". esc_sql($args['public'])."'";			
 		}
 
-
+		if($condition)
+			$condition = " WHERE".$condition;
 
 		if(isset($args['orderby']) && $args['orderby']) {
 			if($args['orderby'] == "random")
@@ -452,7 +446,9 @@ class Famous_Quotes_Collection_DB {
 			else
 			$condition .= " LIMIT ".$args['num_quotes'];
 		}
+		//var_dump ($condition);
 		return $condition;
+		
 
 	} 
 

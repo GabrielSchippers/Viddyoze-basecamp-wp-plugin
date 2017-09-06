@@ -14,7 +14,7 @@ class Famous_Quotes_Collection {
 	public $auto_refresh_max;
 
 	function __construct() {
-		load_plugin_textdomain( 'famous-quotes-collection', false, quotescollection_rel_path( 'languages' ) );
+		load_plugin_textdomain( 'famous-quotes-collection', false);
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts_and_styles' ) );
 		add_action( 'wp_ajax_quotescollection', array( $this, 'ajax_response' ) );
 		add_action( 'wp_ajax_nopriv_quotescollection', array( $this, 'ajax_response' ) );
@@ -30,7 +30,7 @@ class Famous_Quotes_Collection {
 		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
 		check_admin_referer( 'activate-plugin_'.$plugin );
 
-		Quotes_Collection_DB::install_db();
+		Famous_Quotes_Collection_DB::install_db();
 	}
 
 	
@@ -46,11 +46,11 @@ class Famous_Quotes_Collection {
 		}
 
 		if( NULL === $quotescollection_db ) {
-			$quotescollection_db = new Quotes_Collection_DB();
+			$quotescollection_db = new Famous_Quotes_Collection_DB();
 		}
 
 		if( is_admin() && NULL === $quotescollection_admin ) {
-			$quotescollection_admin = new Quotes_Collection_Admin();
+			$quotescollection_admin = new Famous_Quotes_Collection_Admin();
 		}
 	}
 
@@ -60,7 +60,7 @@ class Famous_Quotes_Collection {
 		// Enqueue scripts required for the ajax refresh functionality
 		wp_enqueue_script( 
 			'quotescollection', // handle
-			quotescollection_url( 'js/famous-quotes.js' ), // source
+			famousquotescollection_url( 'js/famous-quotes.js' ), // source
 			array('jquery'), // dependencies
 			self::PLUGIN_VERSION, // version
 			false // load in header, because quotecollectionTimer() has to be loaded before it's called
@@ -80,7 +80,16 @@ class Famous_Quotes_Collection {
 			'autoRefreshCount' => 0
 			)
 		);
-
+		// Enqueue styles for the front end
+		if ( !is_admin() ) {
+			wp_register_style( 
+				'quotescollection', 
+				famousquotescollection_url( 'css/famous-quotes.css' ), 
+				false, 
+				self::PLUGIN_VERSION 
+				);
+			wp_enqueue_style( 'quotescollection' );
+		}
 	}
 
 	/** Initialize the plugin options **/
@@ -103,6 +112,57 @@ class Famous_Quotes_Collection {
 
 			add_option( 'quotescollection', $options );
 		}       
+	}
+	/** Ajax response **/
+	public function ajax_response()
+	{
+		check_ajax_referer('quotescollection'); 
+		
+		$char_limit = (isset($_POST['char_limit']) && is_numeric($_POST['char_limit']))?$_POST['char_limit']:'';
+		$tags = $_POST['tags'];
+		$orderby = $_POST['orderby'];
+		$order = '';
+		$exclude = '';
+		$splice = '';
+
+		if($orderby == 'random' && $_POST['current'] && is_numeric($_POST['current'])) {
+			$exclude = $_POST['current'];
+			$splice = '';
+			$order = '';
+		}
+		else {
+			if ($_POST['current'] && is_numeric($_POST['current']))
+				$splice = $_POST['current'];
+			$exclude = '';
+			$order = 'DESC';
+		}
+		
+		$args = array(
+			'char_limit' => $char_limit,
+			'tags' => $tags,
+			'orderby' => $orderby,
+			'order' => $order,
+			'splice' => $splice,
+			'exclude' => $exclude,
+			'public' => 'yes',
+		);
+
+
+		global $quotescollection_db;
+
+		if(false === ($quote_data = $quotescollection_db->get_quote($args)) && $splice) {
+			$args['splice'] = '';
+			$quote_data = $quotescollection_db->get_quote($args);
+		}
+
+		if($quote_data) {
+			$quote_data->prepare_data(); // Format the data for output before sending
+			$response = json_encode($quote_data);
+			@header("Content-type: text/json; charset=utf-8");
+			die( $response ); 
+		}
+		else
+			die();
 	}
 
 	/**
@@ -182,7 +242,8 @@ class Famous_Quotes_Collection {
 
 		// And fetch the quote, only if dynamic fetch is off
 		if( !$dynamic_fetch ) {
-			if ( $quote = Quotes_Collection_Quote::with_condition( $condition ) ) {
+			if ( $quote = Famous_Quotes_Collection_Quote::with_condition( $condition ) ) {
+				echo $condition;
 				$curr_quote_id = $quote->quote_id;
 				$display = $quote->output_format( 
 					array( 

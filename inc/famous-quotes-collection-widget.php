@@ -203,7 +203,7 @@ class Famous_Quotes_Collection_Widget extends WP_Widget {
 			'random_refresh'      => 1,
 			'refresh_interval'    => 5,
 			'tags'                => '',
-			'char_limit'          => 500,
+			'char_limit'          => 1000,
 		);
 	}
 

@@ -17,6 +17,7 @@ defined( 'ABSPATH' ) or die( 'Access denied' );
 require_once( 'inc/famous-quotes-collection.php' );
 include_once( 'inc/famous-quotes-collection-widget.php' );
 require_once( 'inc/famous-quotes-collection-db.php' );
+require_once( 'inc/famous-quotes-collection-quote.php' );
 if( is_admin() ) {
 	require_once( 'inc/famous-quotes-admin-list-table.php' );
 	require_once( 'inc/famous-quotes-admin.php' );
@@ -70,7 +71,7 @@ function famousquotescollection_quote( $args = NULL ) {
 	
 	$quotescollection_instances++;
 	$args['instance'] = "tf_quotescollection_".$quotescollection_instances;
-	echo $args;
+	//echo $args;
 
 	return $quotescollection->quote( $args );
 

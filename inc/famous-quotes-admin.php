@@ -138,7 +138,7 @@ class Famous_Quotes_Collection_Admin {
 		$options = get_option('quotescollection');
 		$display = $msg = $quotes_list = $alternate = "";
 		
-		if($options['db_version'] != Quotes_Collection_DB::PLUGIN_DB_VERSION )
+		if($options['db_version'] != Famous_Quotes_Collection_DB::PLUGIN_DB_VERSION )
 			$quotescollection_db->install_db();
 
 
@@ -471,7 +471,7 @@ class Famous_Quotes_Collection_Admin {
 		if( $quote_id && is_numeric( $quote_id) ) {
 			$form_name = "quotescollection_editquote";
 			if( !$quote && !$author && !$tags ) {
-				$quote_data = Quotes_Collection_Quote::with_id( $quote_id );
+				$quote_data = Famous_Quotes_Collection_Quote::with_id( $quote_id );
 				$quote = htmlspecialchars( $quote_data->quote );
 				$author = htmlspecialchars( $quote_data->author );
 				$tags = implode( ', ', explode( ',', $quote_data->tags ) );
@@ -800,7 +800,7 @@ EDITFORM;
 			);
 		add_screen_option( $option, $args );
 
-		$this->quotes_list_table = new Quotes_Collection_Admin_List_Table();
+		$this->quotes_list_table = new Famous_Quotes_Collection_Admin_List_Table();
 
 	}
 	public function set_screen_options( $status, $option, $value ) {
@@ -815,9 +815,9 @@ EDITFORM;
 		if(	$screen->id == $this->main_page_id ) {
 			wp_enqueue_script (
 				'quotescollection-confirm-delete',
-				quotescollection_url( 'js/confirm-delete.js' ),
+				famousquotescollection_url( 'js/confirm-delete.js' ),
 				array('jquery-ui-dialog'),
-				Quotes_Collection::PLUGIN_VERSION,
+				Famous_Quotes_Collection::PLUGIN_VERSION,
 				true
 				);
 			wp_localize_script (
@@ -843,9 +843,9 @@ EDITFORM;
 			) {
 			wp_enqueue_style( 
 				'quotescollection-admin', 
-				quotescollection_url( 'css/quotes-collection-admin.css' ),
+				famousquotescollection_url( 'css/famous-quotes.css' ),
 				array(),
-				Quotes_Collection::PLUGIN_VERSION
+				Famous_Quotes_Collection::PLUGIN_VERSION
 			);
 		}
 	}

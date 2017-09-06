@@ -109,6 +109,7 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 			'cb'         => '<input type="checkbox" />', //Render a checkbox instead of text
 			'quote_id'	 => __('ID', 'famous-quotes-collection'),
 			'quote'      => __('Quote', 'famous-quotes-collection'),
+			'author'     => __('Author', 'quotes-collection'),
 			'tags'       => __('Tags', 'famous-quotes-collection'),
 			'date'       => __('Date', 'famous-quotes-collection')
 		);
@@ -138,7 +139,7 @@ class Famous_Quotes_Collection_Admin_List_Table extends WP_List_Table {
 
 	function output_format( $items, $highlight = "" ) {
 		foreach( $items as $key => $quote_data ) {
-			$quote = new Quotes_Collection_Quote( $quote_data );
+			$quote = new Famous_Quotes_Collection_Quote( $quote_data );
 			$quote->prepare_data();
 			$quote_array = (array) $quote;
 			if($highlight) {
